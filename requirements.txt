@@ -1,0 +1,14 @@
+pyspark>=3.5.0
+delta-spark>=3.0.0
+python-dotenv
+
+# ---------------------------------------------------------------------------
+# S3 / MinIO: o Spark usa o filesystem S3A (Hadoop). Os JARs não vêm no pip;
+# devem ser carregados na sessão via spark.jars.packages, por exemplo:
+#
+#   org.apache.hadoop:hadoop-aws:3.3.4
+#   com.amazonaws:aws-java-sdk-bundle:1.12.262
+#
+# Isso será configurado em utils/spark_session.py ao criar a SparkSession.
+# Assim o Spark consegue ler (raw) e escrever (bronze, etc.) no bucket MinIO.
+# ---------------------------------------------------------------------------
