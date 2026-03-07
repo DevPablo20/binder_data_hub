@@ -29,7 +29,10 @@ services:
       /bin/sh -c "
       mc alias set myminio http://minio:9000 $${MINIO_ROOT_USER:-minioadmin} $${MINIO_ROOT_PASSWORD:-minioadmin};
       mc mb myminio/raw --ignore-existing;
-      echo 'Bucket raw pronto.';
+      mc mb myminio/bronze --ignore-existing;
+      mc mb myminio/silver --ignore-existing;
+      mc mb myminio/gold --ignore-existing;
+      echo 'Buckets raw, bronze, silver, gold prontos.';
       exit 0;
       "
     environment:
