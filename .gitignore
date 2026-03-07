@@ -1,0 +1,37 @@
+# Ambiente e secrets
+.env
+.env.local
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Node (NestJS / frontend)
+node_modules/
+dist/
+.npm
+*.log
+npm-debug.log*
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Airbyte – arquivos gerados (se algum dia forem salvos no repo)
+airbyte/secrets.generated.yaml
