@@ -1,7 +1,7 @@
 """
 Escrita de dados nas camadas Bronze, Silver e Gold no MinIO (Delta/Parquet).
 """
-from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import DataFrame
 
 from src.config import settings
 
@@ -24,16 +24,6 @@ def write_delta(
     mode: str = "overwrite",
     partition_by: list[str] | None = None,
 ) -> None:
-    """
-    Escreve DataFrame como tabela Delta no MinIO na camada indicada.
-
-    Args:
-        df: DataFrame a persistir.
-        layer: 'bronze', 'silver' ou 'gold'.
-        table_path: Caminho lógico da tabela (ex.: 'users', 'sales/fact').
-        mode: 'overwrite' ou 'append'.
-        partition_by: Colunas para particionamento (opcional).
-    """
     bucket = _bucket_for_layer(layer)
     base_uri = settings.s3a_uri(bucket, table_path)
 
@@ -50,9 +40,6 @@ def write_parquet(
     mode: str = "overwrite",
     partition_by: list[str] | None = None,
 ) -> None:
-    """
-    Escreve DataFrame como Parquet no MinIO (alternativa sem Delta).
-    """
     bucket = _bucket_for_layer(layer)
     base_uri = settings.s3a_uri(bucket, table_path)
 

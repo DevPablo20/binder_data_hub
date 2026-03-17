@@ -8,7 +8,9 @@ Leitura da camada **Raw** (Parquet no MinIO) e escrita nas camadas **Bronze**, *
 - **spark_session.py** – `SparkSession` com Delta Lake e S3A para MinIO.
 - **io/reader.py** – Leitura de Parquet da Raw.
 - **io/writer.py** – Escrita em Delta (ou Parquet) em Bronze/Silver/Gold.
+- **transformers/** – Raw → Bronze por plataforma (classe abstrata + Google, Pinterest, TikTok).
 - **pipelines/run.py** – Pipeline base: Raw → Bronze → Silver → Gold (transformações placeholder).
+- **pipelines/run_bronze.py** – Executa apenas Raw → Bronze para uma plataforma.
 
 ## Pré-requisitos
 
@@ -26,6 +28,12 @@ export RAW_PATH=""           # subpath em raw (ex.: schema/table)
 export TABLE_NAME="default_table"
 
 python -m src.pipelines.run
+```
+
+Para rodar apenas Raw → Bronze com a estrutura de transformers (uma plataforma por vez):
+
+```bash
+python -m src.pipelines.run_bronze pinterest   # ou google | tiktok
 ```
 
 Para rodar de dentro do diretório do projeto (para o `config` achar o `.env`):
