@@ -10,7 +10,7 @@ from pyspark.sql.functions import col, row_number
 from pyspark.sql.window import Window
 
 from src.io import read_raw_parquet, write_delta
-from src.transformers.table_config import TableConfig
+from src.transformers.table_config import BronzeTableConfig
 
 
 class RawToBronzeTransformer(ABC):
@@ -25,11 +25,11 @@ class RawToBronzeTransformer(ABC):
     @property
     @abstractmethod
     def platform_name(self) -> str:
-        """Identificador da plataforma (ex.: 'google', 'kwai'). Usado em orquestração e logs."""
+        """Identificador da plataforma (ex.: 'tiktok'). Usado em orquestração e logs."""
         ...
 
     @abstractmethod
-    def get_table_configs(self) -> list[TableConfig]: ...
+    def get_table_configs(self) -> list[BronzeTableConfig]: ...
 
     def dedupe(
         self,
@@ -37,14 +37,17 @@ class RawToBronzeTransformer(ABC):
         columns: list[str],
         order_column: str = "_airbyte_extracted_at",
     ) -> DataFrame:
-        window_spec = Window.partitionBy(columns).orderBy(col(order_column).desc())
+        partition_cols = [col(name) for name in columns]
+        window_spec = Window.partitionBy(*partition_cols).orderBy(
+            col(order_column).desc()
+        )
         return (
             df.withColumn("_row_num", row_number().over(window_spec))
             .filter(col("_row_num") == 1)
             .drop("_row_num")
         )
 
-    def transform(self, df: DataFrame, config: TableConfig) -> DataFrame:
+    def transform(self, df: DataFrame, config: BronzeTableConfig) -> DataFrame:
         return df
 
     def run(self, mode: str = "overwrite") -> None:

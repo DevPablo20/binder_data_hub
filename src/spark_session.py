@@ -9,7 +9,7 @@ from src.config import settings
 # Delta + S3A (hadoop-aws + aws-java-sdk) em um único spark.jars.packages
 # para que o Ivy baixe tudo e todos os JARs entrem no classpath.
 SPARK_JARS_PACKAGES = (
-    "io.delta:delta-spark_4.1_2.13:4.1.0,"
+    "io.delta:delta-spark_2.12:3.2.1,"
     "org.apache.hadoop:hadoop-aws:3.3.4,"
     "com.amazonaws:aws-java-sdk-bundle:1.12.262"
 )

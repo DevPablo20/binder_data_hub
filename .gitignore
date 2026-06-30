@@ -5,6 +5,7 @@
 
 # infra
 infra/minio/minio_data/
+infra/airflow/postgres_data/
 
 # Python
 __pycache__/
