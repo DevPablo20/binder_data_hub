@@ -10,6 +10,7 @@ Local ETL app: **Airbyte** extracts TikTok data into MinIO **raw**, **Spark** tr
 | MinIO | Medallion storage (`raw`, `bronze`, `silver`, `gold`) |
 | Spark + Delta | Transformations in `src/transformers/` |
 | Airflow | Orchestration via `dags/tiktok/tiktok_medallion_daily.py` |
+| Query API | FastAPI catalog for TikTok silver/gold tables in MinIO |
 
 ## Project layout
 
@@ -17,14 +18,18 @@ Local ETL app: **Airbyte** extracts TikTok data into MinIO **raw**, **Spark** tr
 binder_data_hub/
 ├── dags/tiktok/              # Airflow DAGs
 ├── src/
+│   ├── api/                  # Query API (FastAPI)
+│   ├── catalog/              # TikTok table registry
 │   ├── transformers/tiktok/  # bronze, silver, gold
 │   ├── pipelines/            # CLI: run_bronze | run_silver | run_gold
 │   └── jobs/                 # thin entrypoints for Airflow
 ├── infra/minio/              # MinIO data volume
 ├── infra/airflow/            # Airflow Dockerfile
+├── infra/query-api/          # Query API Dockerfile
 ├── requirements/
 │   ├── spark.txt
-│   └── airflow.txt
+│   ├── airflow.txt
+│   └── query_api.txt
 └── airbyte/                  # abctl install docs
 ```
 
@@ -60,6 +65,7 @@ docker compose up -d
 
 - MinIO API: http://localhost:9000 (console :9001)
 - Airflow UI: http://localhost:8081 (default `admin` / `admin` from `.env`)
+- Query API: http://localhost:8000 (Swagger at `/docs`)
 
 4. Install Airbyte and sync TikTok → MinIO `raw` bucket (see [airbyte/README.md](airbyte/README.md)).
 
@@ -97,6 +103,38 @@ sync_raw → bronze_tiktok → silver_tiktok → gold_tiktok
 ```
 
 `sync_raw` is a placeholder — run Airbyte sync manually until `TIKTOK_AIRBYTE_JOB_ID` is wired to `AirbyteTriggerSyncOperator` (template commented in the DAG).
+
+## Query API (TikTok silver + gold)
+
+FastAPI service to inspect Delta tables in MinIO. Supported layers: **silver** and **gold** only.
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/health` | Health check |
+| GET | `/catalog` | List all TikTok silver/gold tables |
+| GET | `/catalog/{layer}` | Tables for `silver` or `gold` |
+| GET | `/catalog/{layer}/tiktok/{table}/schema` | Column names and types |
+| GET | `/catalog/{layer}/tiktok/{table}/details` | Schema + row count + MinIO URI |
+| GET | `/catalog/{layer}/tiktok/{table}/preview?limit=10` | Sample rows (max 100) |
+
+**Silver tables:** `advertisers`, `campaigns`, `ad_groups`, `ads`, `ads_reports_daily`
+
+**Gold table:** `campaign_daily_metrics`
+
+### Run locally (without Docker)
+
+```bash
+pip install -r requirements/query_api.txt
+MINIO_ENDPOINT=http://localhost:9000 uvicorn src.api.main:app --reload
+```
+
+### Run with Docker Compose
+
+```bash
+docker compose up -d query-api
+```
+
+Swagger UI: http://localhost:8000/docs
 
 ## Bridge ID contract (binder_app)
 

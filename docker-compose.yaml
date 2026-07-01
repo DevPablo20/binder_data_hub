@@ -126,3 +126,23 @@ services:
     depends_on:
       airflow-init:
         condition: service_completed_successfully
+
+  query-api:
+    build:
+      context: .
+      dockerfile: infra/query-api/Dockerfile
+    container_name: binder-data-hub-query-api
+    ports:
+      - "${QUERY_API_PORT:-8000}:8000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_ENDPOINT: http://minio:9000
+      PYTHONPATH: /opt/binder_data_hub
+    volumes:
+      - ./src:/opt/binder_data_hub/src
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: unless-stopped

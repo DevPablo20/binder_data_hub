@@ -21,5 +21,4 @@ class GoldTableConfig:
     gold_table_name: str
 
 
-# Backward-compatible alias used by bronze base
 TableConfig = BronzeTableConfig

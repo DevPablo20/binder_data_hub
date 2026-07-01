@@ -1,17 +1,3 @@
-"""
-TikTok Ads medallion pipeline: bronze → silver → gold.
-
-sync_raw: placeholder — run Airbyte TikTok sync manually (abctl) until
-TIKTOK_AIRBYTE_JOB_ID is configured for AirbyteTriggerSyncOperator.
-
-# from airflow.providers.airbyte.operators.airbyte import AirbyteTriggerSyncOperator
-# sync_raw = AirbyteTriggerSyncOperator(
-#     task_id="sync_tiktok_raw",
-#     airbyte_conn_id="airbyte_default",
-#     connection_id="{{ var.value.TIKTOK_AIRBYTE_JOB_ID }}",
-#     asynchronous=False,
-# )
-"""
 from datetime import datetime
 
 from airflow import DAG

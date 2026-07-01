@@ -1,4 +1,3 @@
-"""Transformer Silver → Gold para TikTok Ads."""
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col, first, sum
 

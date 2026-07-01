@@ -23,7 +23,6 @@ class MinIOSettings:
     bucket_gold: str = _get("MINIO_BUCKET_GOLD", "gold")
 
     def bucket_for_layer(self, layer: str) -> str:
-        """Retorna o bucket MinIO para a camada (raw, bronze, silver, gold)."""
         layer = layer.lower()
         if layer == "raw":
             return self.bucket_raw
@@ -38,6 +37,9 @@ class MinIOSettings:
     def s3a_uri(self, bucket: str, path: str = "") -> str:
         p = path.strip("/")
         return f"s3a://{bucket}/{p}" if p else f"s3a://{bucket}"
+
+    query_api_host: str = _get("QUERY_API_HOST", "0.0.0.0")
+    query_api_port: int = int(_get("QUERY_API_PORT", "8000"))
 
 
 settings = MinIOSettings()

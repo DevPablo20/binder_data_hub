@@ -1,9 +1,4 @@
-"""
-Escrita de dados nas camadas Bronze, Silver e Gold no MinIO (Delta/Parquet).
-Usa settings.bucket_for_layer para mapear camada → bucket (medallion).
-"""
 from pyspark.sql import DataFrame
-
 from src.config import settings
 
 
@@ -14,7 +9,6 @@ def write_delta(
     mode: str = "overwrite",
     partition_by: list[str] | None = None,
 ) -> None:
-    """Persiste DataFrame em Delta na camada indicada (bronze, silver ou gold)."""
     bucket = settings.bucket_for_layer(layer)
     base_uri = settings.s3a_uri(bucket, table_path)
 
@@ -31,7 +25,6 @@ def write_parquet(
     mode: str = "overwrite",
     partition_by: list[str] | None = None,
 ) -> None:
-    """Persiste DataFrame em Parquet na camada indicada (bronze, silver ou gold)."""
     bucket = settings.bucket_for_layer(layer)
     base_uri = settings.s3a_uri(bucket, table_path)
 

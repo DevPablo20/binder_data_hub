@@ -1,4 +1,3 @@
-"""Contrato para transformação Silver → Gold."""
 from abc import ABC, abstractmethod
 
 from pyspark.sql import DataFrame, SparkSession
@@ -19,7 +18,6 @@ class SilverToGoldTransformer(ABC):
     def get_table_configs(self) -> list[GoldTableConfig]: ...
 
     def build(self, sources: dict[str, DataFrame], config: GoldTableConfig) -> DataFrame | None:
-        """Monta o DataFrame gold a partir das tabelas silver indicadas em config.silver_sources."""
         return None
 
     def run(self, mode: str = "overwrite") -> None:

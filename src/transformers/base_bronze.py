@@ -1,8 +1,3 @@
-"""
-Contrato para transformação Raw → Bronze.
-Cada plataforma implementa platform_name, get_table_configs() e opcionalmente
-transform() ou dedupe(); a base cuida de ler, deduplicar e escrever.
-"""
 from abc import ABC, abstractmethod
 
 from pyspark.sql import DataFrame, SparkSession
@@ -14,18 +9,12 @@ from src.transformers.table_config import BronzeTableConfig
 
 
 class RawToBronzeTransformer(ABC):
-    """
-    Interface para transformar dados da camada Raw (Parquet no MinIO) para Bronze (Delta no MinIO).
-    Implementações devem definir platform_name e get_table_configs(); run() processa todas as tabelas.
-    """
-
     def __init__(self, spark: SparkSession) -> None:
         self.spark = spark
 
     @property
     @abstractmethod
     def platform_name(self) -> str:
-        """Identificador da plataforma (ex.: 'tiktok'). Usado em orquestração e logs."""
         ...
 
     @abstractmethod
@@ -51,7 +40,6 @@ class RawToBronzeTransformer(ABC):
         return df
 
     def run(self, mode: str = "overwrite") -> None:
-        """Para cada tabela em get_table_configs(): lê raw, dedupe (se houver), transform, escreve bronze."""
         for config in self.get_table_configs():
             df = read_raw_parquet(self.spark, path=config.raw_path)
             if df.isEmpty():
